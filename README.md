@@ -4,8 +4,7 @@ This package includes the MATLAB source codes for the modelling of SAR images wi
 Rician (GG-Rician) distribution.
 
 This package includes three folders:
-	1) images		: Stores images for SAR image modelling. We have only shared two example
-		images from TerraSAR-X which are the amplitude and intensity SAR images belongs to the same scene.
+	1) images		: Stores images for SAR image modelling. We have only shared two example images from TerraSAR-X which are the amplitude and intensity SAR images belongs to the same scene.
 	2) main_HELP 		: Stores html help file for main.m script.
 	3) source functions	: Stores three source functions:
 		3.1) calcnbins.m
