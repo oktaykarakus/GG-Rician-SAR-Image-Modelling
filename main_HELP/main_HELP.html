@@ -1,0 +1,163 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>The main script for SAR image modelling with the GG-Rician distribution.</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-03-16"><meta name="DC.source" content="main_HELP.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>The main script for SAR image modelling with the GG-Rician distribution.</h1><!--introduction--><p><i>The GG-Rician probability density function for modeling an amplitude signal is given below</i> [1]</p><p><img src="main_HELP_eq02799705794549158934.png" alt="$$f(r|\alpha, \gamma, \delta) = \frac{\alpha^2 r}{4\gamma^2\Gamma^2(\frac{1}{\alpha})}\times\\ \int_0^{2\pi} \exp\left(-\frac{|r\cos\theta - \delta|^{\alpha} + |r\sin\theta - \delta|^{\alpha}}{\gamma^{\alpha}} \right) d\theta,$$" style="width:456px;height:40px;"></p><p><i>The GG-Rician probability density function for modeling an intensity signal is given below</i> [1]</p><p><img src="main_HELP_eq09891950250786823520.png" alt="$$f_I(\nu|\alpha, \gamma, \delta) = \frac{\alpha^2 }{8\gamma^2\Gamma^2(\frac{1}{\alpha})}\times \int_0^{2\pi} \exp\left(-\frac{|\sqrt{\nu}\cos\theta - \delta|^{\alpha} + |\sqrt{\nu}\sin\theta - \delta|^{\alpha}}{\gamma^{\alpha}} \right) d\theta. $$" style="width:486px;height:40px;"></p><p>The main function uses three main global structure type variables. All of which has various elements. All details are given below.</p><p><b>Parameters</b>                   : GLOBAL VARIABLE. A structure type variable which stores various parameters given below:</p><div><ul><li><b>outSourceImage</b>      : Set to 1 for loading SAR image from computer. Set to 0, otherwise.</li><li><b>distType</b>            : Refers to the type of simulation. 1: GG-Rician Amplitude modelling of example SAR image. 2: GG-Rician Intensity modelling of example SAR image. 3: GG-Rician Amplitude modelling of synthetically generated data.</li><li><b>dsTargetSize</b>        : Downsampling target sample size.</li><li><b>synDataLength</b>       : Synthetically generated data sample size. (Only active when Parameters.distType = 3)</li><li><b>scale</b>               : Synthetically generated data scale parameter. (Only active when Parameters.distType = 3)</li><li><b>shape</b>               : Synthetically generated data shape parameter. (Only active when Parameters.distType = 3)</li><li><b>location</b>            : Synthetically generated data location parameter. (Only active when Parameters.distType = 3)</li><li><b>epsilon</b>             : Hyperparameter for location parameter proposal distribution. (Move M_1)</li><li><b>Xi_sq</b>               : Hyperparameter for scale parameter proposal distribution. (Move M_2)</li><li><b>eta</b>                 : Hyperparameter for shape parameter proposal distribution. (Move M_3)</li><li><b>P_M1</b>                : Probability of Move M_1</li><li><b>P_M2</b>                : Probability of Move M_2</li><li><b>P_M3</b>                : Probability of Move M_3</li><li><b>AllP</b>                : CDF of move probabilities</li><li><b>NumberofIterations</b>  : Number of iterations for MCMC.</li><li><b>burnInPeriod</b>        : Burn-In sample size.</li><li><b>Image</b>               : Full-size SAR Image. Refers to the 1D synthetically generated data for distType=3.</li><li><b>DSInput</b>             : Down-sampled input for MCMC.</li><li><b>dsKL</b>                : KL-divergence value between the full-size SAR Image and DSInput.</li><li><b>dsSize</b>              : Final down-sampled data size.</li><li><b>noDSInput</b>           : Another parameter to store full-size SAR Image.</li><li><b>Data</b>                : Input data for the algorithm.</li></ul></div><p><b>Output</b>                       : GLOBAL VARIABLE. A structure type variable which stores various output variables given below:</p><div><ul><li><b>Location_delta</b>      : Instantenous location parameter estimates.</li><li><b>Scale_gamma</b>         : Instantenous scale parameter estimates.</li><li><b>Shape_alpha</b>         : Instantenous shape parameter estimates.</li><li><b>SelectedMove</b>        : Stores selected move type for each MCMC iteration.</li><li><b>AcceptanceRatio</b>     : Stores calculated acceptance ratio values for each MCMC iteration.</li><li><b>RatioXX</b>             : Stores each specific ratio values in acceptance ratio expressions. Has several forms such as Ratio1, Ratio21.</li></ul></div><p><b>Results</b>                      : GLOBAL VARIABLE. A structure type variable which stores variables given below:</p><div><ul><li><b>estDelta</b>            : Posterior mean estimation for the location parameter.</li><li><b>estGamma</b>            : Posterior mean estimation for the scale parameter.</li><li><b>estAlpha</b>            : Posterior mean estimation for the shape parameter.</li><li><b>KLdiv</b>               : Performance metric. Shows corresponding KL divergence value for the modeling.</li><li><b>KSscore</b>             : Performance metric. Shows corresponding KS Score value for the modeling.</li></ul></div><p><b>alpha</b>                        : Instantenous proposal for the shape parameter.</p><p><b>gamma</b>                        : Instantenous proposal for the scale parameter.</p><p><b>delta</b>                        : Instantenous proposal for the location parameter.</p><p><b>file, path, prompt, dlgtitle, dims, definput, answer, opts</b> : These are variables for pup-up dialog box. When user choses distType = 3, or ourSourceImage = 1, a specific dialog box pops-up and asks user to enter corresponding parameters.</p><p><b>For the functions dsSARImage(.), logLikelihoodCalculation(.), instantenousPlotting(.), and performancePlotting(.)</b>, please visit specific function's .m file.</p><!--/introduction--><p><b>LICENSE</b></p><p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program. If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>Copyright &copy; Oktay Karakus,PhD <a href="mailto:o.karakus@bristol.ac.uk">o.karakus@bristol.ac.uk</a> University of Bristol, UK June, 2020</p><p><b>REFERENCE</b></p><p>[1] <i>O Karakus, E Kuruoglu and A Achim. "A Generalized Gaussian Extension to the Rician       Distribution for SAR Image Modeling."       IEEE Transactions on Geoscience and Remote Sensing (2021).</i></p><p>[2] <i>O Karakus, E Kuruoglu and A Achim. "Modelling Sea Clutter In SAR Images Using       Laplace-Rician Distribution," ICASSP 2020 - 2020 IEEE International Conference       on Acoustics, Speech and Signal Processing (ICASSP), Barcelona, Spain, 2020,       pp. 1454-1458."</i></p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% The main script for SAR image modelling with the GG-Rician distribution.
+%
+% _The GG-Rician probability density function for modeling an amplitude signal is given below_ [1]
+%
+% $$f(r|\alpha, \gamma, \delta) = \frac{\alpha^2 r}{4\gamma^2\Gamma^2(\frac{1}{\alpha})}\times\\ \int_0^{2\pi} \exp\left(-\frac{|r\cos\theta - \delta|^{\alpha} + |r\sin\theta - \delta|^{\alpha}}{\gamma^{\alpha}} \right) d\theta,$$
+% 
+% _The GG-Rician probability density function for modeling an intensity signal is given below_ [1]
+%
+% $$f_I(\nu|\alpha, \gamma, \delta) = \frac{\alpha^2 }{8\gamma^2\Gamma^2(\frac{1}{\alpha})}\times \int_0^{2\pi} \exp\left(-\frac{|\sqrt{\nu}\cos\theta - \delta|^{\alpha} + |\sqrt{\nu}\sin\theta - \delta|^{\alpha}}{\gamma^{\alpha}} \right) d\theta. $$
+% 
+% The main function uses three main global structure type variables. All of which has various elements. All details are given below.
+%
+% *Parameters*                   : GLOBAL VARIABLE. A structure type variable which stores various parameters given below:
+% 
+% * *outSourceImage*      : Set to 1 for loading SAR image from computer. Set to 0, otherwise.
+% * *distType*            : Refers to the type of simulation. 1: GG-Rician Amplitude modelling of example SAR image. 2: GG-Rician Intensity modelling of example SAR image. 3: GG-Rician Amplitude modelling of synthetically generated data.
+% * *dsTargetSize*        : Downsampling target sample size.
+% * *synDataLength*       : Synthetically generated data sample size. (Only active when Parameters.distType = 3)
+% * *scale*               : Synthetically generated data scale parameter. (Only active when Parameters.distType = 3) 
+% * *shape*               : Synthetically generated data shape parameter. (Only active when Parameters.distType = 3)
+% * *location*            : Synthetically generated data location parameter. (Only active when Parameters.distType = 3)
+% * *epsilon*             : Hyperparameter for location parameter proposal distribution. (Move M_1)
+% * *Xi_sq*               : Hyperparameter for scale parameter proposal distribution. (Move M_2)
+% * *eta*                 : Hyperparameter for shape parameter proposal distribution. (Move M_3)
+% * *P_M1*                : Probability of Move M_1 
+% * *P_M2*                : Probability of Move M_2
+% * *P_M3*                : Probability of Move M_3
+% * *AllP*                : CDF of move probabilities
+% * *NumberofIterations*  : Number of iterations for MCMC.
+% * *burnInPeriod*        : Burn-In sample size.
+% * *Image*               : Full-size SAR Image. Refers to the 1D synthetically generated data for distType=3.  
+% * *DSInput*             : Down-sampled input for MCMC.
+% * *dsKL*                : KL-divergence value between the full-size SAR Image and DSInput. 
+% * *dsSize*              : Final down-sampled data size.
+% * *noDSInput*           : Another parameter to store full-size SAR Image.
+% * *Data*                : Input data for the algorithm.
+%
+% *Output*                       : GLOBAL VARIABLE. A structure type variable which stores various output variables given below:
+%
+% * *Location_delta*      : Instantenous location parameter estimates.
+% * *Scale_gamma*         : Instantenous scale parameter estimates.
+% * *Shape_alpha*         : Instantenous shape parameter estimates.
+% * *SelectedMove*        : Stores selected move type for each MCMC iteration.
+% * *AcceptanceRatio*     : Stores calculated acceptance ratio values for each MCMC iteration.
+% * *RatioXX*             : Stores each specific ratio values in acceptance ratio expressions. Has several forms such as Ratio1, Ratio21.
+%
+% *Results*                      : GLOBAL VARIABLE. A structure type variable which stores variables given below:
+%
+% * *estDelta*            : Posterior mean estimation for the location parameter.
+% * *estGamma*            : Posterior mean estimation for the scale parameter.
+% * *estAlpha*            : Posterior mean estimation for the shape parameter.
+% * *KLdiv*               : Performance metric. Shows corresponding KL divergence value for the modeling.
+% * *KSscore*             : Performance metric. Shows corresponding KS Score value for the modeling.
+%
+% *alpha*                        : Instantenous proposal for the shape parameter. 
+%
+% *gamma*                        : Instantenous proposal for the scale parameter. 
+%
+% *delta*                        : Instantenous proposal for the location parameter. 
+%
+% *file, path, prompt, dlgtitle, dims, definput, answer, opts* : These are variables for pup-up dialog box. When user choses distType = 3, or ourSourceImage = 1, a specific dialog box pops-up and asks user to enter corresponding parameters.
+%
+% *For the functions dsSARImage(.), logLikelihoodCalculation(.), instantenousPlotting(.), and performancePlotting(.)*, please visit specific function's .m file.
+% 
+%%
+% *LICENSE*
+% 
+% This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+% 
+% Copyright © Oktay Karakus,PhD 
+% o.karakus@bristol.ac.uk
+% University of Bristol, UK
+% June, 2020
+%
+%%
+% *REFERENCE*
+%
+% [1] _O Karakus, E Kuruoglu and A Achim. "A Generalized Gaussian Extension to the Rician
+%       Distribution for SAR Image Modeling."
+%       IEEE Transactions on Geoscience and Remote Sensing (2021)._
+%
+% [2] _O Karakus, E Kuruoglu and A Achim. "Modelling Sea Clutter In SAR Images Using 
+%       Laplace-Rician Distribution," ICASSP 2020 - 2020 IEEE International Conference
+%       on Acoustics, Speech and Signal Processing (ICASSP), Barcelona, Spain, 2020,
+%       pp. 1454-1458."_ 
+
+##### SOURCE END #####
+--></body></html>
