@@ -1,12 +1,14 @@
 ************************************* GG-Rician SAR Image Modelling *********************************************
 
+This package includes the MATLAB source code for the modeling of SAR images with the Generalized-Gaussian Rician (GG-Rician) distribution. The GG-Rician distribution is a novel statistical model specifically developed for the characterization of synthetic aperture radar (SAR) images. It is based on the Rician distribution to model the amplitude of the complex SAR signal, the in-phase and quadrature components of which are assumed to be generalized-Gaussian distributed. The extension to modeling SAR images in intensity format is also included.
+
 This package includes the MATLAB source codes for the modelling of SAR images with the Generalized-Gaussian 
 	Rician (GG-Rician) distribution.
 
 This package includes three folders:
 
-	1) images		: Stores images for SAR image modelling. We have only shared two example images from 
-		TerraSAR-X which are the amplitude and intensity SAR images belongs to the same scene.
+	1) images		: Stores images for SAR image modelling. We have only shared two example images 
+		from TerraSAR-X which are the amplitude and intensity SAR images belongs to the same scene.
 
 	2) main_HELP 		: Stores html help file for main.m script.
 
